@@ -3,14 +3,33 @@
 ## 1. System Design
 
 **a. Initial design**
+Three things a user should be able to do:
+
+1. Add a pet — Enter basic info about themselves and their pet.
+2. Add tasks — Create care tasks like walks or feedings with a duration and priority.
+3. See today's plan — Generate a daily schedule that shows what to do and when.
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
+I chose four classes:
+
+- **Owner** — holds the user's info and their list of pets
+- **Pet** — holds basic pet info like name, species, and age
+- **Task** — represents one care task with a type, duration, and priority
+- **Schedule** — holds all tasks and is responsible for building the daily plan
 
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+
+After reviewing the skeleton:
+
+1. Changed `Task` to store `pet_name` (a string) instead of the full `Pet` object,
+   to keep the classes loosely coupled and easier to manage.
+
+2. Added `available_minutes` to `Schedule` so the scheduler can respect
+   the owner's time budget when building a daily plan.
 
 ---
 
