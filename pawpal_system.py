@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
+from datetime import date, timedelta
 
 
 class TaskType(Enum):
@@ -24,7 +25,10 @@ class Task:
     duration_minutes: int
     priority: Priority
     pet_name: str
+    time: str = "08:00"              # format: "HH:MM"
+    frequency: str = "once"          # "once", "daily", "weekly"
     is_completed: bool = False
+    due_date: date = field(default_factory=date.today)
 
     def mark_complete(self):
         """Mark this task as completed."""
@@ -89,3 +93,51 @@ class Scheduler:
     def get_pending_tasks(self):
         """Return only tasks that are not completed."""
         return [t for t in self.get_all_tasks() if not t.is_completed]
+
+    def sort_by_time(self):
+        """Return all tasks sorted by their scheduled time (HH:MM)."""
+        return sorted(self.get_all_tasks(), key=lambda t: t.time)
+
+    def filter_by_pet(self, pet_name: str):
+        """Return tasks for a specific pet."""
+        return [t for t in self.get_all_tasks() if t.pet_name == pet_name]
+
+    def filter_by_status(self, completed: bool):
+        """Return tasks filtered by completion status."""
+        return [t for t in self.get_all_tasks() if t.is_completed == completed]
+
+    def handle_recurring(self, task: Task):
+        """If a completed task is recurring, create the next occurrence."""
+        if task.frequency == "daily":
+            new_due = task.due_date + timedelta(days=1)
+        elif task.frequency == "weekly":
+            new_due = task.due_date + timedelta(weeks=1)
+        else:
+            return None
+
+        new_task = Task(
+            title=task.title,
+            task_type=task.task_type,
+            duration_minutes=task.duration_minutes,
+            priority=task.priority,
+            pet_name=task.pet_name,
+            time=task.time,
+            frequency=task.frequency,
+            due_date=new_due
+        )
+        return new_task
+
+    def detect_conflicts(self):
+        """Return a list of warning messages for tasks scheduled at the same time for the same pet."""
+        tasks = self.get_all_tasks()
+        warnings = []
+        seen = {}
+        for task in tasks:
+            key = (task.pet_name, task.time)
+            if key in seen:
+                warnings.append(
+                    f"Conflict: '{task.title}' and '{seen[key]}' are both scheduled at {task.time} for {task.pet_name}"
+                )
+            else:
+                seen[key] = task.title
+        return warnings
