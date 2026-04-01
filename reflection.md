@@ -9,8 +9,7 @@ Three things a user should be able to do:
 2. Add tasks — Create care tasks like walks or feedings with a duration and priority.
 3. See today's plan — Generate a daily schedule that shows what to do and when.
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+
 I chose four classes:
 
 - **Owner** — holds the user's info and their list of pets
@@ -20,8 +19,7 @@ I chose four classes:
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+
 
 After reviewing the skeleton:
 
@@ -37,13 +35,18 @@ After reviewing the skeleton:
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler considers two constraints: task priority (high, medium, low)
+and scheduled time. Priority was the most important because urgent tasks
+like medication should never be bumped by lower-priority ones like playtime.
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+
+
+
+The conflict detector only flags tasks at the exact same time, not overlapping
+durations. This keeps the logic simple but means a 30-minute task at 07:00 and
+a task at 07:15 would not be caught.
 
 ---
 
@@ -51,40 +54,39 @@ After reviewing the skeleton:
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+I used Claude for brainstorming classes, generating skeletons, and writing
+tests. The most helpful prompts were specific ones like "add conflict detection
+that returns a warning instead of crashing."
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
-
----
+Claude stored the full Pet object inside Task. I changed it to just the pet
+name since it kept things simpler and less coupled.
 
 ## 4. Testing and Verification
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+I tested task completion, sorting, conflict detection, and recurring tasks.
+These cover the core behaviors the scheduler relies on.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
-
----
+⭐⭐⭐⭐ — Core behaviors work. I'd next test overlapping durations and
+owners with no pets.
 
 ## 5. Reflection
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+Keeping the backend separate from the UI made debugging way easier.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+Add a proper time picker instead of a text input, and make conflict detection
+duration-aware instead of just exact time matches.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+AI is great for boilerplate but you still have to make the real design calls.
+If you accept every suggestion without thinking, the code gets messy fast.
